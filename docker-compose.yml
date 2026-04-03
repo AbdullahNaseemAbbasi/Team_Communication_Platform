@@ -1,0 +1,46 @@
+# Docker Compose — Development Environment
+# Yeh file 2 services define karti hai: MongoDB aur Redis
+# Run: docker-compose up -d
+
+services:
+  # ============================================
+  # MongoDB — Primary Database
+  # ============================================
+  # MongoDB ek NoSQL document database hai
+  # Humara saara data yahan store hoga: users, messages, workspaces, channels
+  # Port 27017 MongoDB ka default port hai
+  mongo:
+    image: mongo:7              # MongoDB version 7 ka official Docker image
+    container_name: teamchat-mongo
+    restart: unless-stopped     # Crash hone pe automatic restart (unless manually stopped)
+    ports:
+      - "27017:27017"           # Host port : Container port (laptop se access ke liye)
+    volumes:
+      - mongo_data:/data/db     # Data persist karega — container delete hone pe bhi data safe
+    environment:
+      MONGO_INITDB_DATABASE: team-chat   # Default database name
+
+  # ============================================
+  # Redis — Cache & Real-time State
+  # ============================================
+  # Redis ek in-memory data store hai (RAM mein data rakhta hai = ultra fast)
+  # Use cases:
+  #   1. Session storage (JWT refresh tokens)
+  #   2. Online/offline user status
+  #   3. Typing indicators ("user is typing...")
+  #   4. Caching frequently accessed data
+  # Port 6379 Redis ka default port hai
+  redis:
+    image: redis:7-alpine       # Alpine = lightweight Linux image (size: ~30MB vs ~100MB)
+    container_name: teamchat-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"             # Host 6380 → Container 6379 (6379 already in use on host)
+    volumes:
+      - redis_data:/data        # Redis data persist karega
+
+# Named volumes — Docker managed storage
+# Yeh data host machine pe store hota hai, containers se independent
+volumes:
+  mongo_data:
+  redis_data:

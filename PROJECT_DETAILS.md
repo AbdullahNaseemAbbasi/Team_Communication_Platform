@@ -966,3 +966,62 @@ docker-compose up --build
 ---
 
 > **This document serves as the single source of truth for the Team Communication Platform project. All implementation decisions, architectural choices, and feature specifications are defined here. Refer to this document when building any part of the system.**
+
+---
+
+## 11. Development Approach — Teaching Mode
+
+> **IMPORTANT FOR AI ASSISTANTS (Claude or any LLM reading this document):**
+>
+> This project is being built with a **learning-first approach**. The developer (Abdullah) wants to deeply understand every technical concept, decision, and piece of code written during development. Follow these rules strictly:
+
+### Rules for Every Step
+
+1. **Explain Before Writing Code**
+   - Before writing any file or code block, explain **what** you are about to create, **why** it is needed, and **how** it works technically.
+   - Example: Before creating `jwt.strategy.ts`, explain what a Passport strategy is, how JWT validation works, what the `validate()` method does, and why we need it.
+
+2. **Step-by-Step Execution**
+   - Do NOT rush through multiple files at once. Work on **one concept at a time**.
+   - After each step, pause and make sure the developer understands before moving to the next.
+
+3. **Technical Knowledge With Every Action**
+   - Every action (installing a package, creating a file, writing a function) must come with a clear technical explanation.
+   - Cover: What is this? Why are we using it? How does it work internally? What are the alternatives?
+
+4. **Real-World Context**
+   - Relate concepts to how they work in production applications (Slack, Discord, etc.).
+   - Example: "JWT refresh tokens work the same way Slack keeps you logged in for days without re-entering your password."
+
+5. **No Black Boxes**
+   - Nothing should feel like magic. Every line of code should be understood.
+   - If a decorator like `@UseGuards()` is used, explain what decorators are, what guards are, and how NestJS processes them.
+
+6. **Progressive Complexity**
+   - Start simple, then layer complexity. Don't introduce advanced patterns before the basics are clear.
+   - Example: First make a simple login work → then add JWT → then add refresh tokens → then add Google OAuth.
+
+7. **Ask Before Proceeding**
+   - After explaining a concept and writing the code, ask the developer if they understood or have questions before moving forward.
+
+8. **Summarize After Each Module**
+   - After completing a module (e.g., Auth), provide a summary of:
+     - What was built
+     - What technologies were used and why
+     - How the pieces connect together
+     - Key concepts learned
+
+### What the Developer Wants to Learn
+
+- **Backend Architecture:** NestJS modules, dependency injection, decorators, guards, interceptors, pipes
+- **Authentication:** JWT mechanics, OAuth flows, session management, bcrypt hashing, token rotation
+- **Database Design:** MongoDB schema design, Mongoose ODM, indexing strategies, relationships in NoSQL
+- **Real-time Systems:** WebSocket architecture, Socket.io rooms/namespaces, event-driven programming
+- **State Management:** Zustand store patterns, React Query caching strategies, optimistic updates
+- **WebRTC:** Peer-to-peer connections, signaling servers, ICE candidates, STUN/TURN servers
+- **DevOps:** Docker containerization, CI/CD pipelines, environment management, deployment strategies
+- **TypeScript:** Generics, utility types, type guards, discriminated unions, module augmentation
+
+### End Goal
+
+By the time this project is complete, the developer should have **deep technical knowledge** of every technology, pattern, and architectural decision used — not just a working codebase, but a thorough understanding of **why everything works the way it does**.
