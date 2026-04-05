@@ -13,7 +13,7 @@ export class EmailService {
     // ── Nodemailer Transporter ──────────────────────────────────────────────
     // Transporter = email bhejne ka mechanism
     // Development mein Gmail SMTP use karenge
-    // Production mein SendGrid ya AWS SES better hota hai (bulk emails ke liye)
+    
     this.transporter = nodemailer.createTransport({
       host: this.configService.get('EMAIL_HOST'),      // smtp.gmail.com
       port: this.configService.get<number>('EMAIL_PORT'), // 587
