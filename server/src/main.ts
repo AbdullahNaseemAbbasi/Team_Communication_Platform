@@ -13,9 +13,9 @@ async function bootstrap() {
 
   // ── 2. CORS (Cross-Origin Resource Sharing) ───────────────────────
   // Browser security rule: ek origin (localhost:3000) doosri origin
-  // (localhost:3001) ko call nahi kar sakta jab tak server allow na kare
+  // (localhost:3001)
   // Hum explicitly frontend URL ko allow kar rahe hain
-  app.enableCors({
+  app.enableCors({ 
     origin: process.env.CLIENT_URL || 'http://localhost:3000',
     credentials: true, // Cookies/auth headers allow karo
   });

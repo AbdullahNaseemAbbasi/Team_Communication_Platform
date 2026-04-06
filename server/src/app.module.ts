@@ -9,7 +9,7 @@ import { UsersModule } from './users/users.module';
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(
       process.env.MONGODB_URI || 'mongodb://localhost:27017/team-chat',
-    ),
+    ), 
     AuthModule,
     UsersModule,
     // WorkspacesModule, ← Phase 2 mein aayega
