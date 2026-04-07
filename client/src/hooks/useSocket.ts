@@ -2,7 +2,8 @@ import { useEffect, useRef, useCallback } from "react";
 import { connectSocket, disconnectSocket } from "@/lib/socket";
 import { useChatStore } from "@/store/chatStore";
 import { useAuthStore } from "@/store/authStore";
-import type { Message, TypingUser } from "@/types";
+import { useNotificationStore } from "@/store/notificationStore";
+import type { Message, Notification, TypingUser } from "@/types";
 import type { Socket } from "socket.io-client";
 
 export function useSocket(channelId: string | null) {
@@ -10,6 +11,7 @@ export function useSocket(channelId: string | null) {
   const { addMessage, updateMessage, removeMessage, setTypingUser } =
     useChatStore();
   const { isAuthenticated } = useAuthStore();
+  const { addNotification } = useNotificationStore();
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -33,14 +35,19 @@ export function useSocket(channelId: string | null) {
       setTypingUser(data);
     });
 
+    socket.on("notification:new", (notification: Notification) => {
+      addNotification(notification);
+    });
+
     return () => {
       socket.off("message:new");
       socket.off("message:updated");
       socket.off("message:deleted");
       socket.off("user:typing");
+      socket.off("notification:new");
       disconnectSocket();
     };
-  }, [isAuthenticated, addMessage, updateMessage, removeMessage, setTypingUser]);
+  }, [isAuthenticated, addMessage, updateMessage, removeMessage, setTypingUser, addNotification]);
 
   useEffect(() => {
     const socket = socketRef.current;

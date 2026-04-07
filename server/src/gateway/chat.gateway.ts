@@ -10,6 +10,8 @@ import {
 import { Server, Socket } from 'socket.io';
 import { MessagesService } from '../messages/messages.service';
 import { UsersService } from '../users/users.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { ChannelsService } from '../channels/channels.service';
 import { JwtService } from '@nestjs/jwt';
 
 @WebSocketGateway({
@@ -27,6 +29,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private messagesService: MessagesService,
     private usersService: UsersService,
+    private notificationsService: NotificationsService,
+    private channelsService: ChannelsService,
     private jwtService: JwtService,
   ) {}
 
@@ -139,6 +143,68 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
           reply: message,
         });
     }
+
+    try {
+      const sender = await this.usersService.findById(userId);
+      const channel = await this.channelsService.findById(data.channelId);
+      const senderName = sender?.displayName || 'Someone';
+      const channelName = channel?.name || 'a channel';
+      const workspaceId = channel.workspace.toString();
+      const messageId = (message as any)._id.toString();
+
+      if (data.mentions && data.mentions.length > 0) {
+        const mentionIds = data.mentions.filter((id) => id !== userId);
+        await this.notificationsService.createForMentions(
+          mentionIds,
+          senderName,
+          channelName,
+          data.content,
+          workspaceId,
+          data.channelId,
+          messageId,
+        );
+
+        for (const mentionedUserId of mentionIds) {
+          const sockets = this.userSockets.get(mentionedUserId);
+          if (sockets) {
+            for (const socketId of sockets) {
+              this.server.to(socketId).emit('notification:new', {
+                type: 'mention',
+                title: `${senderName} mentioned you`,
+                body: `In #${channelName}: ${data.content.slice(0, 100)}`,
+              });
+            }
+          }
+        }
+      }
+
+      if (data.parentMessageId) {
+        const parentMsg = await this.messagesService.findById(data.parentMessageId);
+        if (parentMsg && parentMsg.sender.toString() !== userId) {
+          const parentSenderId = parentMsg.sender.toString();
+          await this.notificationsService.createForReply(
+            parentSenderId,
+            senderName,
+            channelName,
+            data.content,
+            workspaceId,
+            data.channelId,
+            messageId,
+          );
+
+          const sockets = this.userSockets.get(parentSenderId);
+          if (sockets) {
+            for (const socketId of sockets) {
+              this.server.to(socketId).emit('notification:new', {
+                type: 'reply',
+                title: `${senderName} replied to your message`,
+                body: `In #${channelName}: ${data.content.slice(0, 100)}`,
+              });
+            }
+          }
+        }
+      }
+    } catch {}
   }
 
   @SubscribeMessage('message:edit')

@@ -14,6 +14,10 @@ export class MessagesService {
     @InjectModel(Message.name) private messageModel: Model<MessageDocument>,
   ) {}
 
+  async findById(id: string): Promise<MessageDocument | null> {
+    return this.messageModel.findById(id).exec();
+  }
+
   async create(
     dto: CreateMessageDto,
     senderId: string,

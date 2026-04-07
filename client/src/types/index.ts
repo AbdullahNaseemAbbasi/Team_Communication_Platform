@@ -140,3 +140,18 @@ export interface TypingUser {
   channelId: string;
   isTyping: boolean;
 }
+
+export interface Notification {
+  _id: string;
+  recipient: string;
+  type: "mention" | "reply" | "invite" | "dm" | "system";
+  title: string;
+  body: string;
+  data: {
+    workspace: string | null;
+    channel: string | null;
+    message: string | null;
+  };
+  read: boolean;
+  createdAt: string;
+}
