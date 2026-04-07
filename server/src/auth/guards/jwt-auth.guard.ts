@@ -11,5 +11,5 @@ import { AuthGuard } from '@nestjs/passport';
 // AuthGuard('jwt') → NestJS ko bolta hai "jwt" naam ki strategy use karo
 // Woh strategy JwtStrategy hai jo humne upar banai
 
-@Injectable()
+@Injectable() 
 export class JwtAuthGuard extends AuthGuard('jwt') {}

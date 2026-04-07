@@ -5,7 +5,7 @@ import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar"
 
 import { cn } from "@/lib/utils"
 
-function Avatar({
+function Avatar({ 
   className,
   size = "default",
   ...props
@@ -34,7 +34,7 @@ function AvatarImage({ className, ...props }: AvatarPrimitive.Image.Props) {
         className
       )}
       {...props}
-    />
+    /> 
   )
 }
 
@@ -51,7 +51,7 @@ function AvatarFallback({
       )}
       {...props}
     />
-  )
+  ) 
 }
 
 function AvatarBadge({ className, ...props }: React.ComponentProps<"span">) {
