@@ -25,7 +25,7 @@ export class AuthService {
   async register(dto: RegisterDto) {
     const existingUser = await this.usersService.findByEmail(dto.email);
     if (existingUser) {
-      throw new ConflictException('Is email se account pehle se exist karta hai');
+      throw new ConflictException('An account with this email already exists');
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -45,7 +45,7 @@ export class AuthService {
     await this.emailService.sendOtpEmail(user.email, user.displayName, otp);
 
     return {
-      message: 'Account ban gaya! Email check karo aur OTP se verify karo.',
+      message: 'Account created! Check your email for the verification code.',
       email: user.email,
     };
   }
@@ -54,16 +54,16 @@ export class AuthService {
     const user = await this.usersService.findByEmail(dto.email);
 
     if (!user) {
-      throw new BadRequestException('User nahi mila');
+      throw new BadRequestException('User not found');
     }
     if (user.emailVerified) {
-      throw new BadRequestException('Email pehle se verify hai');
+      throw new BadRequestException('Email is already verified');
     }
     if (!user.otpCode || user.otpCode !== dto.otp) {
-      throw new BadRequestException('OTP galat hai');
+      throw new BadRequestException('Invalid OTP code');
     }
     if (!user.otpExpiry || user.otpExpiry < new Date()) {
-      throw new BadRequestException('OTP expire ho gaya — dobara bhejwa lo');
+      throw new BadRequestException('OTP has expired. Please request a new one.');
     }
 
     await this.usersService.updateById(user._id.toString(), {
@@ -72,26 +72,26 @@ export class AuthService {
       otpExpiry: null,
     });
 
-    return { message: 'Email verify ho gaya! Ab login kar sakte ho.' };
+    return { message: 'Email verified successfully! You can now log in.' };
   }
 
   async login(dto: LoginDto) {
     const user = await this.usersService.findByEmail(dto.email);
     if (!user) {
-      throw new UnauthorizedException('Email ya password galat hai');
+      throw new UnauthorizedException('Invalid email or password');
     }
 
     if (!user.password) {
-      throw new UnauthorizedException('Yeh account Google se bana tha — Google se login karo');
+      throw new UnauthorizedException('This account uses Google sign-in');
     }
 
     if (!user.emailVerified) {
-      throw new UnauthorizedException('Pehle email verify karo');
+      throw new UnauthorizedException('Please verify your email first');
     }
 
     const isPasswordValid = await bcrypt.compare(dto.password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Email ya password galat hai');
+      throw new UnauthorizedException('Invalid email or password');
     }
 
     return this.generateTokens(user._id.toString(), user.email);
@@ -124,7 +124,7 @@ export class AuthService {
 
       return this.generateTokens(user._id.toString(), user.email);
     } catch {
-      throw new UnauthorizedException('Refresh token invalid ya expire ho gaya');
+      throw new UnauthorizedException('Refresh token is invalid or expired');
     }
   }
 

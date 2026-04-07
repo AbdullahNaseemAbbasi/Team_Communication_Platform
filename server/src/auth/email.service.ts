@@ -22,32 +22,32 @@ export class EmailService {
   async sendOtpEmail(email: string, displayName: string, otp: string): Promise<void> {
     try {
       await this.transporter.sendMail({
-        from: `"Team Chat" <${this.configService.get('EMAIL_FROM')}>`,
+        from: `"TeamChat" <${this.configService.get('EMAIL_FROM')}>`,
         to: email,
-        subject: 'Email Verify Karo — Team Chat',
+        subject: 'Verify your email — TeamChat',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto;">
-            <h2 style="color: #4F46E5;">Team Chat</h2>
-            <p>Assalamu Alaikum <strong>${displayName}</strong>!</p>
-            <p>Tumhara verification code yeh hai:</p>
+            <h2 style="color: #4F46E5;">TeamChat</h2>
+            <p>Hello <strong>${displayName}</strong>!</p>
+            <p>Your verification code is:</p>
             <div style="background: #F3F4F6; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
               <span style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #4F46E5;">
                 ${otp}
               </span>
             </div>
             <p style="color: #6B7280; font-size: 14px;">
-              Yeh code <strong>10 minutes</strong> mein expire ho jaayega.
+              This code expires in <strong>10 minutes</strong>.
             </p>
             <p style="color: #6B7280; font-size: 14px;">
-              Agar tumne sign up nahi kiya toh is email ko ignore karo.
+              If you did not sign up, please ignore this email.
             </p>
           </div>
         `,
       });
 
-      this.logger.log(`OTP email bhej diya: ${email}`);
+      this.logger.log(`OTP email sent to: ${email}`);
     } catch (error) {
-      this.logger.error(`Email bhejne mein masla: ${error}`);
+      this.logger.error(`Failed to send email: ${error}`);
     }
   }
 }

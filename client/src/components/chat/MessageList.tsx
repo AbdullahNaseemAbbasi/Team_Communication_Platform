@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { useChatStore } from "@/store/chatStore";
 import MessageItem from "./MessageItem";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Props {
   channelId: string;
@@ -13,72 +12,57 @@ interface Props {
   onThreadOpen: (messageId: string) => void;
 }
 
-export default function MessageList({
-  channelId,
-  onEdit,
-  onDelete,
-  onReaction,
-  onThreadOpen,
-}: Props) {
+export default function MessageList({ channelId, onEdit, onDelete, onReaction, onThreadOpen }: Props) {
   const { messages, isLoading, hasMore, fetchMessages } = useChatStore();
   const bottomRef = useRef<HTMLDivElement>(null);
-  const prevMessageCountRef = useRef(0);
+  const prevCountRef = useRef(0);
+
+  useEffect(() => { fetchMessages(channelId); }, [channelId, fetchMessages]);
 
   useEffect(() => {
-    fetchMessages(channelId);
-  }, [channelId, fetchMessages]);
-
-  useEffect(() => {
-    if (messages.length > prevMessageCountRef.current) {
+    if (messages.length > prevCountRef.current) {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-    prevMessageCountRef.current = messages.length;
+    prevCountRef.current = messages.length;
   }, [messages.length]);
 
-  const handleLoadMore = useCallback(() => {
-    if (isLoading || !hasMore || messages.length === 0) return;
-    const oldest = messages[messages.length - 1];
-    fetchMessages(channelId, oldest.createdAt);
-  }, [isLoading, hasMore, messages, channelId, fetchMessages]);
-
-  const sortedMessages = [...messages].sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-  );
+  const sorted = [...messages].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 
   return (
-    <ScrollArea className="flex-1">
-      <div className="py-4">
-        {hasMore && (
-          <div className="text-center py-2">
-            <button
-              onClick={handleLoadMore}
-              disabled={isLoading}
-              className="text-xs text-blue-500 hover:underline disabled:opacity-50"
-            >
-              {isLoading ? "Loading..." : "Load older messages"}
-            </button>
-          </div>
-        )}
+    <div className="flex-1 overflow-y-auto">
+      {hasMore && messages.length > 0 && (
+        <div className="text-center py-3">
+          <button
+            onClick={() => {
+              if (messages.length > 0) {
+                const oldest = sorted[0];
+                fetchMessages(channelId, oldest.createdAt);
+              }
+            }}
+            disabled={isLoading}
+            className="text-xs text-[#00a8fc] hover:underline disabled:opacity-50"
+          >
+            {isLoading ? "Loading..." : "Load older messages"}
+          </button>
+        </div>
+      )}
 
-        {sortedMessages.map((message) => (
-          <MessageItem
-            key={message._id}
-            message={message}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onReaction={onReaction}
-            onThreadOpen={onThreadOpen}
-          />
+      {sorted.length === 0 && !isLoading && (
+        <div className="flex flex-col items-center justify-center h-full text-center p-8">
+          <div className="w-16 h-16 rounded-full bg-indigo-500/20 flex items-center justify-center mb-4">
+            <span className="text-3xl">💬</span>
+          </div>
+          <h3 className="text-xl font-bold text-white mb-1">Welcome to the channel!</h3>
+          <p className="text-[#949ba4] text-sm">This is the beginning of the conversation. Send a message to get started.</p>
+        </div>
+      )}
+
+      <div className="py-2">
+        {sorted.map((message) => (
+          <MessageItem key={message._id} message={message} onEdit={onEdit} onDelete={onDelete} onReaction={onReaction} onThreadOpen={onThreadOpen} />
         ))}
-
-        {messages.length === 0 && !isLoading && (
-          <div className="text-center text-muted-foreground text-sm py-12">
-            No messages yet. Start the conversation!
-          </div>
-        )}
-
-        <div ref={bottomRef} />
       </div>
-    </ScrollArea>
+      <div ref={bottomRef} />
+    </div>
   );
 }

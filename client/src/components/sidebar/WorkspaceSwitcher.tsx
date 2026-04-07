@@ -1,36 +1,47 @@
 "use client";
 
 import { useWorkspaceStore } from "@/store/workspaceStore";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 export default function WorkspaceSwitcher() {
-  const { workspaces, activeWorkspace, setActiveWorkspace } =
-    useWorkspaceStore();
+  const { workspaces, activeWorkspace, setActiveWorkspace } = useWorkspaceStore();
 
   return (
-    <div className="flex flex-col items-center gap-2 py-3 px-2 bg-slate-950">
+    <>
       {workspaces.map((workspace) => (
         <Tooltip key={workspace._id}>
           <TooltipTrigger
             onClick={() => setActiveWorkspace(workspace)}
-            className={cn(
-              "w-10 h-10 rounded-xl transition-all duration-200",
-              activeWorkspace?._id === workspace._id
-                ? "rounded-2xl ring-2 ring-white"
-                : "hover:rounded-xl opacity-70 hover:opacity-100"
-            )}
+            className="relative group"
           >
-            <Avatar className="w-10 h-10">
-              <AvatarFallback className="bg-indigo-600 text-white text-sm font-bold">
+            <div className={cn(
+              "absolute left-0 top-1/2 -translate-y-1/2 -translate-x-[22px] w-1 rounded-r bg-white transition-all",
+              activeWorkspace?._id === workspace._id ? "h-10" : "h-0 group-hover:h-5"
+            )} />
+            <Avatar className={cn(
+              "w-12 h-12 transition-all",
+              activeWorkspace?._id === workspace._id
+                ? "rounded-2xl"
+                : "rounded-3xl group-hover:rounded-2xl"
+            )}>
+              {workspace.logo && <AvatarImage src={workspace.logo} />}
+              <AvatarFallback className={cn(
+                "text-white font-bold text-lg transition-all",
+                activeWorkspace?._id === workspace._id
+                  ? "bg-indigo-600 rounded-2xl"
+                  : "bg-[#36393f] rounded-3xl group-hover:rounded-2xl group-hover:bg-indigo-600"
+              )}>
                 {workspace.name.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
           </TooltipTrigger>
-          <TooltipContent side="right">{workspace.name}</TooltipContent>
+          <TooltipContent side="right" className="font-semibold">
+            {workspace.name}
+          </TooltipContent>
         </Tooltip>
       ))}
-    </div>
+    </>
   );
 }

@@ -13,54 +13,28 @@ import ThreadPanel from "@/components/chat/ThreadPanel";
 export default function ChannelPage() {
   const params = useParams();
   const channelId = params.channelId as string;
-  const { setActiveChannel, channels } = useWorkspaceStore();
+  const { setActiveChannel, channels, activeChannel } = useWorkspaceStore();
   const { clearMessages } = useChatStore();
   const [threadMessageId, setThreadMessageId] = useState<string | null>(null);
 
-  const {
-    sendMessage,
-    editMessage,
-    deleteMessage,
-    startTyping,
-    stopTyping,
-    addReaction,
-  } = useSocket(channelId);
+  const { sendMessage, editMessage, deleteMessage, startTyping, stopTyping, addReaction } = useSocket(channelId);
 
   useEffect(() => {
     const channel = channels.find((c) => c._id === channelId);
     if (channel) setActiveChannel(channel);
-    return () => {
-      clearMessages();
-    };
+    return () => { clearMessages(); };
   }, [channelId, channels, setActiveChannel, clearMessages]);
 
   return (
-    <div className="flex h-full -m-6">
+    <div className="flex h-full">
       <div className="flex-1 flex flex-col">
-        <MessageList
-          channelId={channelId}
-          onEdit={editMessage}
-          onDelete={deleteMessage}
-          onReaction={addReaction}
-          onThreadOpen={setThreadMessageId}
-        />
+        <MessageList channelId={channelId} onEdit={editMessage} onDelete={deleteMessage} onReaction={addReaction} onThreadOpen={setThreadMessageId} />
         <TypingIndicator channelId={channelId} />
-        <MessageInput
-          channelId={channelId}
-          onSend={sendMessage}
-          onTypingStart={startTyping}
-          onTypingStop={stopTyping}
-        />
+        <MessageInput channelId={channelId} channelName={activeChannel?.name} onSend={sendMessage} onTypingStart={startTyping} onTypingStop={stopTyping} />
       </div>
 
       {threadMessageId && (
-        <ThreadPanel
-          parentMessageId={threadMessageId}
-          channelId={channelId}
-          onClose={() => setThreadMessageId(null)}
-          onSendReply={sendMessage}
-          onReaction={addReaction}
-        />
+        <ThreadPanel parentMessageId={threadMessageId} channelId={channelId} onClose={() => setThreadMessageId(null)} onSendReply={sendMessage} onReaction={addReaction} />
       )}
     </div>
   );
