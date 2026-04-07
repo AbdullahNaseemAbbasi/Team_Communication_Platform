@@ -60,3 +60,42 @@ export interface ApiError {
   message: string;
   statusCode: number;
 }
+
+export interface WorkspaceMember {
+  user: User;
+  role: "owner" | "admin" | "member" | "guest";
+  joinedAt: string;
+}
+
+export interface WorkspaceSettings {
+  defaultChannel: string | null;
+  fileUploadLimit: number;
+  allowGuests: boolean;
+}
+
+export interface Workspace {
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  logo: string | null;
+  owner: User;
+  members: WorkspaceMember[];
+  inviteCode: string;
+  settings: WorkspaceSettings;
+  createdAt: string;
+}
+
+export interface Channel {
+  _id: string;
+  workspace: string;
+  name: string;
+  description: string;
+  topic: string;
+  type: "public" | "private" | "dm";
+  category: string;
+  members: User[];
+  pinnedMessages: string[];
+  createdBy: User;
+  createdAt: string;
+}

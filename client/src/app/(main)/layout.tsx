@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
+import { useWorkspaceStore } from "@/store/workspaceStore";
 import Sidebar from "@/components/sidebar/Sidebar";
 
 export default function MainLayout({
@@ -11,6 +12,7 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   const { isAuthenticated, isLoading, fetchUser } = useAuthStore();
+  const { activeChannel } = useWorkspaceStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -40,11 +42,23 @@ export default function MainLayout({
       <Sidebar />
       <main className="flex-1 flex flex-col overflow-hidden">
         <header className="h-14 border-b flex items-center px-6 bg-white dark:bg-slate-950 shrink-0">
-          <h2 className="font-semibold text-lg"># general</h2>
+          {activeChannel ? (
+            <div>
+              <h2 className="font-semibold text-lg">
+                {activeChannel.type === "private" ? "🔒" : "#"}{" "}
+                {activeChannel.name}
+              </h2>
+              {activeChannel.topic && (
+                <p className="text-xs text-muted-foreground">
+                  {activeChannel.topic}
+                </p>
+              )}
+            </div>
+          ) : (
+            <h2 className="text-muted-foreground">Select a channel</h2>
+          )}
         </header>
-        <div className="flex-1 overflow-auto p-6">
-          {children}
-        </div>
+        <div className="flex-1 overflow-auto p-6">{children}</div>
       </main>
     </div>
   );
