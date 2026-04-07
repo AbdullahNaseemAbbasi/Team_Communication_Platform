@@ -15,7 +15,7 @@ import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 // @Controller('auth') → Saare routes /api/auth/... se shuru honge (prefix /api main.ts mein set tha)
-@Controller('auth')
+@Controller('auth') 
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -31,7 +31,7 @@ export class AuthController {
   @Post('verify-email')
   async verifyEmail(@Body() dto: VerifyOtpDto) {
     return this.authService.verifyEmail(dto);
-  }
+  } 
 
   // ── POST /api/auth/login ─────────────────────────────────────────────────────
   @Post('login')
@@ -44,7 +44,7 @@ export class AuthController {
   @Post('refresh-token')
   async refreshToken(@Body() body: { refreshToken: string }) {
     return this.authService.refreshAccessToken(body.refreshToken);
-  }
+  } 
 
   // ── GET /api/auth/me (Protected Route) ──────────────────────────────────────
   // @UseGuards(JwtAuthGuard) → pehle JWT verify hoga, phir ye route chalega

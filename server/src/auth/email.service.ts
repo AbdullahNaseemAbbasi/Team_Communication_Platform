@@ -18,7 +18,7 @@ export class EmailService {
       host: this.configService.get('EMAIL_HOST'),      // smtp.gmail.com
       port: this.configService.get<number>('EMAIL_PORT'), // 587
       secure: false, // false for port 587 (STARTTLS), true for 465 (SSL)
-      auth: {
+      auth: {  
         user: this.configService.get('EMAIL_USER'),
         pass: this.configService.get('EMAIL_PASS'),
         // Gmail ke liye normal password nahi — "App Password" chahiye
