@@ -25,8 +25,8 @@ import { UsersModule } from '../users/users.module';
   providers: [
     AuthService,
     EmailService,
-    JwtStrategy,    // JWT protected routes ke liye
-    GoogleStrategy, // Google OAuth ke liye
+    JwtStrategy,    //JWT protected routes ke liye
+    GoogleStrategy, //Google OAuth ke liye
   ],
 })
 export class AuthModule {}

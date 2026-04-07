@@ -35,12 +35,12 @@ export class AuthService {
 
     // 2. Password hash karo bcrypt se
     // ── Bcrypt kya karta hai? ──────────────────────────────────────────────
-    // Plain text password kabhi save nahi karte — agar database leak ho toh sab exposed
-    // bcrypt password ko ek random "salt" ke saath mix karke ek fixed-length hash banata hai
-    // "password123" → "$2b$10$abc...xyz" (60 char hash)
-    // Hash se original password wapas nahi aa sakta (one-way function)
-    // Slack bhi yehi karta hai — tumhara password Slack ko bhi nahi pata
-    // 10 = "salt rounds" — jitna zyada, utna secure (but slow). 10 industry standard hai
+    //Plain text password kabhi save nahi karte — agar database leak ho toh sab exposed
+    //bcrypt password ko ek random "salt" ke saath mix karke ek fixed-length hash banata hai
+    //"password123" → "$2b$10$abc...xyz" (60 char hash)
+    //Hash se original password wapas nahi aa sakta (one-way function)
+    //Slack bhi yehi karta hai — tumhara password Slack ko bhi nahi pata
+    //10 = "salt rounds" — jitna zyada, utna secure (but slow). 10 industry standard hai
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
     // 3. 6-digit OTP generate karo — email verification ke liye
