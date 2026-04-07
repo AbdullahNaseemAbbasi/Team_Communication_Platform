@@ -1,24 +1,10 @@
 "use client";
 
-// ============================================
-// LOGIN PAGE — User authentication form
-// ============================================
-// URL: /login
-// User email + password daalte hain → backend verify karta hai → tokens milte hain
-//
-// "use client" kyun?
-// - useState chahiye (form data store karne ke liye)
-// - onClick/onSubmit chahiye (form submit handle karne ke liye)
-// - useRouter chahiye (programmatic navigation ke liye)
-// - Zustand store access chahiye (browser-only)
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
 
-// shadcn/ui components import
-// Yeh sab components humne Step 4 mein install kiye the
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,48 +18,24 @@ import {
 } from "@/components/ui/card";
 
 export default function LoginPage() {
-  // ---- STATE ----
-  // useState = React hook jo component-level state manage karta hai
-  // [value, setValue] = current value + update function
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  // ---- HOOKS ----
-  // useRouter = Next.js ka hook for programmatic navigation
-  // router.push("/dashboard") = user ko doosre page pe bhejo
   const router = useRouter();
 
-  // Zustand store se login function aur isLoading state uthao
-  // Yeh destructuring hai — object se specific properties nikaal rahe hain
   const { login, isLoading } = useAuthStore();
 
-  // ---- FORM SUBMIT HANDLER ----
-  // async function kyunki API call await karna hai
   const handleSubmit = async (e: React.FormEvent) => {
-    // e.preventDefault() = form ka default behavior roko
-    // Default behavior = page reload (hum nahi chahte — SPA hai)
     e.preventDefault();
 
-    // Pehle se error dikh raha ho toh hata do
     setError("");
 
     try {
-      // Zustand store ka login function call karo
-      // Yeh internally:
-      // 1. POST /auth/login → tokens milte hain
-      // 2. Tokens localStorage mein save hote hain
-      // 3. GET /auth/me → user data fetch hota hai
-      // 4. Store update hota hai (user + isAuthenticated = true)
       await login({ email, password });
 
-      // Login successful → redirect to home page
-      // router.push() = client-side navigation (page reload nahi hota)
       router.push("/");
     } catch (err: unknown) {
-      // Login fail hua — error message dikhao
-      // Backend se error message extract karte hain
-      // Axios errors mein response.data.message mein message hota hai
       if (err && typeof err === "object" && "response" in err) {
         const axiosError = err as { response?: { data?: { message?: string } } };
         setError(axiosError.response?.data?.message || "Login failed. Please try again.");
@@ -85,27 +47,20 @@ export default function LoginPage() {
 
   return (
     <Card>
-      {/* ---- CARD HEADER ---- */}
       <CardHeader>
         <CardTitle className="text-2xl">Welcome back</CardTitle>
         <CardDescription>Enter your credentials to sign in</CardDescription>
       </CardHeader>
 
-      {/* ---- CARD CONTENT (Form) ---- */}
       <CardContent>
-        {/* onSubmit = jab form submit ho (Enter key ya button click) */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* ---- Error Message ---- */}
-          {/* Conditional rendering: error string empty nahi hai toh dikhao */}
           {error && (
             <div className="bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 text-sm p-3 rounded-md">
               {error}
             </div>
           )}
 
-          {/* ---- Email Field ---- */}
           <div className="space-y-2">
-            {/* htmlFor = label click karne pe associated input focus hota hai (accessibility) */}
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
@@ -113,17 +68,16 @@ export default function LoginPage() {
               placeholder="name@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required // HTML5 validation — empty submit nahi hoga
+              required
               disabled={isLoading}
             />
           </div>
 
-          {/* ---- Password Field ---- */}
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
-              type="password" // Dots dikhata hai (masked input)
+              type="password"
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -133,17 +87,13 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* ---- Submit Button ---- */}
-          {/* w-full = poori width, disabled jab loading ho */}
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Signing in..." : "Sign in"}
           </Button>
         </form>
       </CardContent>
 
-      {/* ---- CARD FOOTER ---- */}
       <CardFooter className="flex flex-col gap-4">
-        {/* ---- Separator ---- */}
         <div className="relative w-full">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />
@@ -155,8 +105,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* ---- Google OAuth Button ---- */}
-        {/* Backend pe redirect karta hai: GET /api/auth/google */}
         <Button
           variant="outline"
           className="w-full"
@@ -186,8 +134,6 @@ export default function LoginPage() {
           Google
         </Button>
 
-        {/* ---- Register Link ---- */}
-        {/* Link component = Next.js ka <a> tag — client-side navigation karta hai */}
         <p className="text-sm text-center text-muted-foreground">
           Don&apos;t have an account?{" "}
           <Link href="/register" className="text-primary hover:underline font-medium">

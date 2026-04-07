@@ -1,12 +1,5 @@
 "use client";
 
-// ============================================
-// REGISTER PAGE — New user signup form
-// ============================================
-// URL: /register
-// User name + email + password daalte hain → backend account banata hai → OTP email bhejta hai
-// Successful register ke baad → /verify-email page pe redirect
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -25,7 +18,6 @@ import {
 } from "@/components/ui/card";
 
 export default function RegisterPage() {
-  // Form fields ka state
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,12 +31,9 @@ export default function RegisterPage() {
     e.preventDefault();
     setError("");
 
-    // ---- CLIENT-SIDE VALIDATION ----
-    // Backend pe bhi validation hai (class-validator), but client-side pehle check karo
-    // Kyun? Better UX — network call kiye bina instant feedback
     if (password !== confirmPassword) {
       setError("Passwords do not match");
-      return; // Return = function yahan ruk jaye, aagay na jaye
+      return;
     }
 
     if (password.length < 6) {
@@ -53,14 +42,8 @@ export default function RegisterPage() {
     }
 
     try {
-      // Zustand store ka register function call karo
-      // Backend: POST /auth/register → OTP email send karta hai
       await register({ displayName, email, password });
 
-      // Register successful → verify-email page pe bhejo
-      // Email ko URL query parameter mein bhejte hain taake verify page pe auto-fill ho
-      // encodeURIComponent() = special characters ko URL-safe banata hai
-      // e.g. "user@test.com" → "user%40test.com"
       router.push(`/verify-email?email=${encodeURIComponent(email)}`);
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
@@ -87,7 +70,6 @@ export default function RegisterPage() {
             </div>
           )}
 
-          {/* ---- Display Name ---- */}
           <div className="space-y-2">
             <Label htmlFor="displayName">Display Name</Label>
             <Input
@@ -102,7 +84,6 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* ---- Email ---- */}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -116,7 +97,6 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* ---- Password ---- */}
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input
@@ -131,8 +111,6 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* ---- Confirm Password ---- */}
-          {/* Yeh field backend mein nahi jaati — sirf client-side check hai */}
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">Confirm Password</Label>
             <Input
