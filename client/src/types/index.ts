@@ -99,3 +99,44 @@ export interface Channel {
   createdBy: User;
   createdAt: string;
 }
+
+export interface MessageAttachment {
+  url: string;
+  filename: string;
+  fileType: string;
+  size: number;
+}
+
+export interface MessageReaction {
+  emoji: string;
+  users: string[];
+}
+
+export interface MessageThread {
+  parentMessage: string | null;
+  replyCount: number;
+  lastReplyAt: string | null;
+}
+
+export interface Message {
+  _id: string;
+  channel: string;
+  sender: User;
+  content: string;
+  type: "text" | "image" | "file" | "system";
+  attachments: MessageAttachment[];
+  reactions: MessageReaction[];
+  thread: MessageThread;
+  mentions: User[];
+  edited: boolean;
+  editedAt: string | null;
+  deleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TypingUser {
+  userId: string;
+  channelId: string;
+  isTyping: boolean;
+}

@@ -5,6 +5,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
 import { ChannelsModule } from './channels/channels.module';
+import { MessagesModule } from './messages/messages.module';
+import { GatewayModule } from './gateway/gateway.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { ChannelsModule } from './channels/channels.module';
     UsersModule,
     WorkspacesModule,
     ChannelsModule,
+    MessagesModule,
+    GatewayModule,
   ],
 })
 export class AppModule {}
