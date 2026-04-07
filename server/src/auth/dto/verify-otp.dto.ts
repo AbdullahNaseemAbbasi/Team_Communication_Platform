@@ -8,3 +8,4 @@ export class VerifyOtpDto {
   @Length(6, 6, { message: 'OTP exactly 6 digits ka hona chahiye' })
   otp: string;
 }
+ 

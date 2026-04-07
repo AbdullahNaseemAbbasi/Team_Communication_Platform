@@ -38,7 +38,7 @@ function AvatarImage({ className, ...props }: AvatarPrimitive.Image.Props) {
   )
 }
 
-function AvatarFallback({
+function AvatarFallback({ 
   className,
   ...props
 }: AvatarPrimitive.Fallback.Props) {
