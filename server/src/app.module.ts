@@ -7,6 +7,7 @@ import { WorkspacesModule } from './workspaces/workspaces.module';
 import { ChannelsModule } from './channels/channels.module';
 import { MessagesModule } from './messages/messages.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { AdminModule } from './admin/admin.module';
 import { GatewayModule } from './gateway/gateway.module';
 
 @Module({
@@ -21,6 +22,7 @@ import { GatewayModule } from './gateway/gateway.module';
     ChannelsModule,
     MessagesModule,
     NotificationsModule,
+    AdminModule,
     GatewayModule,
   ],
 })
