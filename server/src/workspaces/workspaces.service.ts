@@ -231,9 +231,11 @@ export class WorkspacesService {
     workspace: WorkspaceDocument,
     userId: string,
   ): string | null {
-    const member = workspace.members.find(
-      (m) => m.user.toString() === userId,
-    );
+    const member = workspace.members.find((m) => {
+      const u = m.user as any;
+      const memberId = u?._id ? u._id.toString() : String(u);
+      return memberId === userId;
+    });
     return member ? member.role : null;
   }
 

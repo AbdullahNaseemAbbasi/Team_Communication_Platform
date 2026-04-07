@@ -63,18 +63,16 @@ export default function NotificationBell() {
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger>
-        <button className="relative p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-          <span className="text-lg">🔔</span>
-          {unreadCount > 0 && (
-            <Badge
-              variant="destructive"
-              className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center text-[10px] px-1"
-            >
-              {unreadCount > 99 ? "99+" : unreadCount}
-            </Badge>
-          )}
-        </button>
+      <DropdownMenuTrigger className="relative p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <span className="text-lg">🔔</span>
+        {unreadCount > 0 && (
+          <Badge
+            variant="destructive"
+            className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center text-[10px] px-1"
+          >
+            {unreadCount > 99 ? "99+" : unreadCount}
+          </Badge>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80 p-0">
         <div className="flex items-center justify-between p-3 border-b">
