@@ -107,7 +107,7 @@ export default function RegisterPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              disabled={isLoading}
+              disabled={isLoading} 
             />
           </div>
 

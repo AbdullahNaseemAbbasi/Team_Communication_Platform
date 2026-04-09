@@ -23,7 +23,7 @@ export default function AuthLayout({
               <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-lg">📹</div>
               <div>
                 <p className="font-semibold">Voice & Video calls</p>
-                <p className="text-sm text-slate-400">Crystal clear communication</p>
+                <p className="text-sm text-slate-400">Crystal clear communication</p> 
               </div>
             </div>
             <div className="flex items-center gap-3">

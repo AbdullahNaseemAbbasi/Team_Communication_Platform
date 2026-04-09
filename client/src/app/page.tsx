@@ -17,7 +17,7 @@ export default function Home() {
       if (isAuthenticated) {
         router.push("/workspace");
       } else {
-        router.push("/login");
+        router.push("/login"); 
       }
     }
   }, [isLoading, isAuthenticated, router]);

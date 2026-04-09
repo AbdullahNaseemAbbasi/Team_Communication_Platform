@@ -16,7 +16,7 @@ export function useSocket(channelId: string | null) {
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const socket = connectSocket();
+    const socket = connectSocket(); 
     socketRef.current = socket;
 
     socket.on("message:new", (message: Message) => {
