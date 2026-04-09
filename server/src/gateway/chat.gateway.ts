@@ -7,6 +7,7 @@ import {
   ConnectedSocket,
   MessageBody,
 } from '@nestjs/websockets';
+import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { MessagesService } from '../messages/messages.service';
 import { UsersService } from '../users/users.service';
@@ -16,14 +17,16 @@ import { JwtService } from '@nestjs/jwt';
 
 @WebSocketGateway({
   cors: {
-    origin: [
-      process.env.CLIENT_URL || 'http://localhost:3000',
-      'http://localhost:3002',
-    ],
+    origin: (process.env.ALLOWED_ORIGINS || process.env.CLIENT_URL || 'http://localhost:3000')
+      .split(',')
+      .map((o) => o.trim())
+      .filter(Boolean),
     credentials: true,
   },
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  private readonly logger = new Logger(ChatGateway.name);
+
   @WebSocketServer()
   server!: Server;
 
@@ -63,7 +66,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         userId,
         status: 'online',
       });
-    } catch {
+    } catch (error) {
+      this.logger.warn(`Socket auth failed: ${error}`);
       client.disconnect();
     }
   }
@@ -207,7 +211,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
           }
         }
       }
-    } catch {}
+    } catch (error) {
+      this.logger.error(`Failed to create notifications: ${error}`);
+    }
   }
 
   @SubscribeMessage('message:edit')

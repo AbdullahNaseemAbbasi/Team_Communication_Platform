@@ -1,0 +1,88 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: teamchat-mongo-prod
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: team-chat
+    networks:
+      - teamchat-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: teamchat-redis-prod
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - teamchat-net
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: teamchat-server-prod
+    restart: always
+    depends_on:
+      - mongo
+      - redis
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      MONGODB_URI: mongodb://mongo:27017/team-chat
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
+      CLIENT_URL: ${CLIENT_URL}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_PORT: ${EMAIL_PORT}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASS: ${EMAIL_PASS}
+      EMAIL_FROM: ${EMAIL_FROM}
+    ports:
+      - "3001:3001"
+    networks:
+      - teamchat-net
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+        NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL}
+    container_name: teamchat-client-prod
+    restart: always
+    depends_on:
+      - server
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL}
+    ports:
+      - "3000:3000"
+    networks:
+      - teamchat-net
+
+volumes:
+  mongo_data:
+  redis_data:
+
+networks:
+  teamchat-net:
+    driver: bridge

@@ -9,10 +9,10 @@ import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
   cors: {
-    origin: [
-      process.env.CLIENT_URL || 'http://localhost:3000',
-      'http://localhost:3002',
-    ],
+    origin: (process.env.ALLOWED_ORIGINS || process.env.CLIENT_URL || 'http://localhost:3000')
+      .split(',')
+      .map((o) => o.trim())
+      .filter(Boolean),
     credentials: true,
   },
 })

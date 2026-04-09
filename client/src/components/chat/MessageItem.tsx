@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import type { Message } from "@/types";
 import { useAuthStore } from "@/store/authStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -85,7 +86,15 @@ export default function MessageItem({ message, onEdit, onDelete, onReaction, onT
             <div className="flex flex-wrap gap-2 mt-2">
               {message.attachments.map((att, i) =>
                 att.fileType.startsWith("image/") ? (
-                  <img key={i} src={att.url} alt={att.filename} className="max-w-sm rounded-lg border border-[#1f2023]" />
+                  <Image
+                    key={i}
+                    src={att.url}
+                    alt={att.filename}
+                    width={400}
+                    height={300}
+                    unoptimized
+                    className="max-w-sm h-auto rounded-lg border border-[#1f2023]"
+                  />
                 ) : (
                   <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-[#2b2d31] border border-[#1f2023] rounded-lg p-3 hover:bg-[#36393f] transition-colors">
                     <span>📎</span>
