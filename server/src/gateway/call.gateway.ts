@@ -18,7 +18,7 @@ import { Server, Socket } from 'socket.io';
 })
 export class CallGateway {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   private activeCalls: Map<
     string,

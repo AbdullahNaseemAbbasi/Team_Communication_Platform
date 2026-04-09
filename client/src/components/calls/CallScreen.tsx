@@ -47,7 +47,7 @@ export default function CallScreen({
           <div className="text-center text-white">
             <div className="text-6xl mb-4">📞</div>
             <p className="text-xl font-semibold">Voice call in progress</p>
-            <audio ref={remoteVideoRef as any} autoPlay />
+            <audio ref={remoteVideoRef as unknown as React.RefObject<HTMLAudioElement>} autoPlay />
           </div>
         )}
       </div>

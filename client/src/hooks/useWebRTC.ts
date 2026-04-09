@@ -238,7 +238,7 @@ export function useWebRTC() {
 
     socket.on(
       "call:signal",
-      (data: { callId: string; fromUserId: string; signal: any }) => {
+      (data: { callId: string; fromUserId: string; signal: Peer.SignalData }) => {
         if (peerRef.current) {
           peerRef.current.signal(data.signal);
         }

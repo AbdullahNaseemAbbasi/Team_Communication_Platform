@@ -10,12 +10,18 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/compon
 export default function NotificationBell() {
   const { notifications, unreadCount, fetchNotifications, fetchUnreadCount, markAsRead, markAllAsRead } = useNotificationStore();
   const [open, setOpen] = useState(false);
+  const [now, setNow] = useState<number>(() => Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => { fetchUnreadCount(); }, [fetchUnreadCount]);
   useEffect(() => { if (open) fetchNotifications(); }, [open, fetchNotifications]);
 
   const formatTime = (dateStr: string) => {
-    const diff = Date.now() - new Date(dateStr).getTime();
+    const diff = now - new Date(dateStr).getTime();
     const m = Math.floor(diff / 60000);
     if (m < 1) return "now";
     if (m < 60) return `${m}m`;

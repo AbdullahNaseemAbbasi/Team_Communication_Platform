@@ -6,16 +6,16 @@ export type MessageDocument = Message & Document;
 @Schema({ timestamps: true })
 export class Message {
   @Prop({ type: Types.ObjectId, ref: 'Channel', required: true, index: true })
-  channel: Types.ObjectId;
+  channel!: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  sender: Types.ObjectId;
+  sender!: Types.ObjectId;
 
   @Prop({ required: true })
-  content: string;
+  content!: string;
 
   @Prop({ enum: ['text', 'image', 'file', 'system'], default: 'text' })
-  type: string;
+  type!: string;
 
   @Prop({
     type: [
@@ -28,7 +28,7 @@ export class Message {
     ],
     default: [],
   })
-  attachments: {
+  attachments!: {
     url: string;
     filename: string;
     fileType: string;
@@ -44,7 +44,7 @@ export class Message {
     ],
     default: [],
   })
-  reactions: {
+  reactions!: {
     emoji: string;
     users: Types.ObjectId[];
   }[];
@@ -56,23 +56,23 @@ export class Message {
       lastReplyAt: { type: Date, default: null },
     }),
   )
-  thread: {
+  thread!: {
     parentMessage: Types.ObjectId | null;
     replyCount: number;
     lastReplyAt: Date | null;
   };
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }], default: [] })
-  mentions: Types.ObjectId[];
+  mentions!: Types.ObjectId[];
 
   @Prop({ default: false })
-  edited: boolean;
+  edited!: boolean;
 
   @Prop({ default: null })
-  editedAt: Date;
+  editedAt!: Date;
 
   @Prop({ default: false })
-  deleted: boolean;
+  deleted!: boolean;
 
   @Prop({
     type: [
@@ -83,7 +83,7 @@ export class Message {
     ],
     default: [],
   })
-  readBy: {
+  readBy!: {
     user: Types.ObjectId;
     readAt: Date;
   }[];

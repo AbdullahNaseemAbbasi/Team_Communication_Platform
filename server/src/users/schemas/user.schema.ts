@@ -6,37 +6,37 @@ export type UserDocument = HydratedDocument<User>;
 @Schema({ timestamps: true })
 export class User {
   @Prop({ required: true, unique: true, lowercase: true, trim: true })
-  email: string;
+  email!: string;
 
   @Prop({ type: String, default: null })
-  password: string | null;
+  password!: string | null;
 
   @Prop({ type: String, required: true, trim: true })
-  displayName: string;
+  displayName!: string;
 
   @Prop({ type: String, default: null })
-  avatar: string | null;
+  avatar!: string | null;
 
   @Prop({ type: String, enum: ['online', 'offline', 'away', 'dnd'], default: 'offline' })
-  status: string;
+  status!: string;
 
   @Prop({ type: String, default: null })
-  customStatus: string | null;
+  customStatus!: string | null;
 
   @Prop({ type: Date, default: null })
-  lastSeen: Date | null;
+  lastSeen!: Date | null;
 
   @Prop({ type: Boolean, default: false })
-  emailVerified: boolean;
+  emailVerified!: boolean;
 
   @Prop({ type: String, default: null })
-  googleId: string | null;
+  googleId!: string | null;
 
   @Prop({ type: String, default: null })
-  otpCode: string | null;
+  otpCode!: string | null;
 
   @Prop({ type: Date, default: null })
-  otpExpiry: Date | null;
+  otpExpiry!: Date | null;
 
   @Prop({
     type: {
@@ -54,7 +54,7 @@ export class User {
     },
     default: {},
   })
-  preferences: {
+  preferences!: {
     notifications: {
       email: boolean;
       push: boolean;

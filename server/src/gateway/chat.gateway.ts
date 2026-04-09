@@ -25,7 +25,7 @@ import { JwtService } from '@nestjs/jwt';
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   private userSockets: Map<string, string[]> = new Map();
 

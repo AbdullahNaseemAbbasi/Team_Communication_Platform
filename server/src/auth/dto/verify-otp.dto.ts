@@ -2,10 +2,9 @@ import { IsEmail, IsString, Length } from 'class-validator';
 
 export class VerifyOtpDto {
   @IsEmail()
-  email: string;
+  email!: string;
 
   @IsString()
-  @Length(6, 6, { message: 'OTP exactly 6 digits ka hona chahiye' })
-  otp: string;
+  @Length(6, 6, { message: 'OTP must be exactly 6 digits' })
+  otp!: string;
 }
- 

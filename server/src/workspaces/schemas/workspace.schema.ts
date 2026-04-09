@@ -12,19 +12,19 @@ export interface WorkspaceMember {
 @Schema({ timestamps: true })
 export class Workspace {
   @Prop({ required: true, trim: true, maxlength: 50 })
-  name: string;
+  name!: string;
 
   @Prop({ required: true, unique: true, lowercase: true, trim: true })
-  slug: string;
+  slug!: string;
 
   @Prop({ default: '' })
-  description: string;
+  description!: string;
 
   @Prop({ default: null })
-  logo: string;
+  logo!: string;
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  owner: Types.ObjectId;
+  owner!: Types.ObjectId;
 
   @Prop({
     type: [
@@ -40,10 +40,10 @@ export class Workspace {
     ],
     default: [],
   })
-  members: WorkspaceMember[];
+  members!: WorkspaceMember[];
 
   @Prop({ unique: true })
-  inviteCode: string;
+  inviteCode!: string;
 
   @Prop(
     raw({
@@ -52,7 +52,7 @@ export class Workspace {
       allowGuests: { type: Boolean, default: true },
     }),
   )
-  settings: {
+  settings!: {
     defaultChannel: Types.ObjectId | null;
     fileUploadLimit: number;
     allowGuests: boolean;

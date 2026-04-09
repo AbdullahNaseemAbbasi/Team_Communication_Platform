@@ -3,7 +3,7 @@ import { connectSocket, disconnectSocket } from "@/lib/socket";
 import { useChatStore } from "@/store/chatStore";
 import { useAuthStore } from "@/store/authStore";
 import { useNotificationStore } from "@/store/notificationStore";
-import type { Message, Notification, TypingUser } from "@/types";
+import type { Message, MessageAttachment, Notification, TypingUser } from "@/types";
 import type { Socket } from "socket.io-client";
 
 export function useSocket(channelId: string | null) {
@@ -65,7 +65,7 @@ export function useSocket(channelId: string | null) {
       channelId: string;
       content: string;
       parentMessageId?: string;
-      attachments?: any[];
+      attachments?: MessageAttachment[];
       mentions?: string[];
     }) => {
       socketRef.current?.emit("message:send", data);

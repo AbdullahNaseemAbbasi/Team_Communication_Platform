@@ -6,19 +6,19 @@ export type NotificationDocument = Notification & Document;
 @Schema({ timestamps: true })
 export class Notification {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
-  recipient: Types.ObjectId;
+  recipient!: Types.ObjectId;
 
   @Prop({
     required: true,
     enum: ['mention', 'reply', 'invite', 'dm', 'system'],
   })
-  type: string;
+  type!: string;
 
   @Prop({ required: true })
-  title: string;
+  title!: string;
 
   @Prop({ required: true })
-  body: string;
+  body!: string;
 
   @Prop(
     raw({
@@ -27,14 +27,14 @@ export class Notification {
       message: { type: Types.ObjectId, ref: 'Message', default: null },
     }),
   )
-  data: {
+  data!: {
     workspace: Types.ObjectId | null;
     channel: Types.ObjectId | null;
     message: Types.ObjectId | null;
   };
 
   @Prop({ default: false })
-  read: boolean;
+  read!: boolean;
 }
 
 export const NotificationSchema =

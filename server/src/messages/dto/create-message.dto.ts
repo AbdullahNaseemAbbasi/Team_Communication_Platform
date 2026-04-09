@@ -2,10 +2,10 @@ import { IsString, IsOptional, IsArray } from 'class-validator';
 
 export class CreateMessageDto {
   @IsString()
-  channelId: string;
+  channelId!: string;
 
   @IsString()
-  content: string;
+  content!: string;
 
   @IsOptional()
   @IsString()
