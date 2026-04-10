@@ -2,10 +2,13 @@ import {
   WebSocketGateway,
   WebSocketServer,
   SubscribeMessage,
+  OnGatewayConnection,
   ConnectedSocket,
   MessageBody,
 } from '@nestjs/websockets';
+import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
+import { JwtService } from '@nestjs/jwt';
 
 @WebSocketGateway({
   cors: {
@@ -16,9 +19,32 @@ import { Server, Socket } from 'socket.io';
     credentials: true,
   },
 })
-export class CallGateway {
+export class CallGateway implements OnGatewayConnection {
+  private readonly logger = new Logger(CallGateway.name);
+
   @WebSocketServer()
   server!: Server;
+
+  constructor(private jwtService: JwtService) {}
+
+  async handleConnection(client: Socket) {
+    try {
+      const token =
+        client.handshake.auth?.token ||
+        client.handshake.headers?.authorization?.split(' ')[1];
+
+      if (!token) {
+        client.disconnect();
+        return;
+      }
+
+      const payload = this.jwtService.verify(token);
+      client.data.userId = payload.sub;
+    } catch (error) {
+      this.logger.warn(`Call socket auth failed: ${error}`);
+      client.disconnect();
+    }
+  }
 
   private activeCalls: Map<
     string,
@@ -75,14 +101,18 @@ export class CallGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { callId: string },
   ) {
+    const userId = client.data.userId;
+    if (!userId) return;
+
     const call = this.activeCalls.get(data.callId);
-    if (!call) return;
+    // Only the intended receiver can accept the call
+    if (!call || call.receiverId !== userId) return;
 
     const callerSockets = this.findSocketsByUserId(call.callerId);
     for (const socketId of callerSockets) {
       this.server.to(socketId).emit('call:accepted', {
         callId: data.callId,
-        acceptedBy: client.data.userId,
+        acceptedBy: userId,
       });
     }
   }
@@ -92,8 +122,12 @@ export class CallGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { callId: string },
   ) {
+    const userId = client.data.userId;
+    if (!userId) return;
+
     const call = this.activeCalls.get(data.callId);
-    if (!call) return;
+    // Only the intended receiver can reject the call
+    if (!call || call.receiverId !== userId) return;
 
     const callerSockets = this.findSocketsByUserId(call.callerId);
     for (const socketId of callerSockets) {
@@ -110,13 +144,15 @@ export class CallGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { callId: string },
   ) {
+    const userId = client.data.userId;
+    if (!userId) return;
+
     const call = this.activeCalls.get(data.callId);
-    if (!call) return;
+    // Only participants of the call can end it
+    if (!call || (call.callerId !== userId && call.receiverId !== userId)) return;
 
     const otherUserId =
-      client.data.userId === call.callerId
-        ? call.receiverId
-        : call.callerId;
+      userId === call.callerId ? call.receiverId : call.callerId;
 
     const otherSockets = this.findSocketsByUserId(otherUserId);
     for (const socketId of otherSockets) {
@@ -134,11 +170,19 @@ export class CallGateway {
     @MessageBody()
     data: { callId: string; targetUserId: string; signal: any },
   ) {
+    const userId = client.data.userId;
+    if (!userId) return;
+
+    const call = this.activeCalls.get(data.callId);
+    // Only participants of the call can signal, and only to the other participant
+    if (!call || (call.callerId !== userId && call.receiverId !== userId)) return;
+    if (data.targetUserId !== call.callerId && data.targetUserId !== call.receiverId) return;
+
     const targetSockets = this.findSocketsByUserId(data.targetUserId);
     for (const socketId of targetSockets) {
       this.server.to(socketId).emit('call:signal', {
         callId: data.callId,
-        fromUserId: client.data.userId,
+        fromUserId: userId,
         signal: data.signal,
       });
     }

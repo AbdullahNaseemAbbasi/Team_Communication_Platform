@@ -57,7 +57,7 @@ export class AuthController {
 
     const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
     return {
-      url: `${clientUrl}/auth/callback?accessToken=${accessToken}&refreshToken=${refreshToken}`,
+      url: `${clientUrl}/callback?accessToken=${accessToken}&refreshToken=${refreshToken}`,
     };
   }
 }
