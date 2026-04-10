@@ -9,6 +9,13 @@ async function bootstrap() {
 
   app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 
+  // Trust proxy headers (required for Railway/Render/Heroku reverse proxies
+  // so that rate limiting and IP detection work correctly)
+  const httpAdapter = app.getHttpAdapter().getInstance();
+  if (typeof httpAdapter.set === 'function') {
+    httpAdapter.set('trust proxy', 1);
+  }
+
   app.setGlobalPrefix('api');
 
   const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.CLIENT_URL || 'http://localhost:3000')
@@ -30,7 +37,9 @@ async function bootstrap() {
   );
 
   const port = process.env.PORT || 3001;
-  await app.listen(port);
+  // Bind to 0.0.0.0 so the server is reachable on Railway/Render/Docker
+  // (default Node.js binding is IPv6 localhost which fails on those platforms)
+  await app.listen(port, '0.0.0.0');
 
   logger.log(`Server running on port ${port}`);
   logger.log(`API available at /api`);

@@ -115,20 +115,106 @@ A production-grade Slack/Discord-style team communication platform built with Ne
 
 3. Frontend runs on port 3000, backend on 3001.
 
-### Option 2: Vercel + Railway
+### Option 2: Vercel + Railway (Recommended for Beginners)
 
-**Frontend (Vercel):**
-1. Push project to GitHub
-2. Import repository in Vercel, set root to `client`
-3. Add environment variables (`NEXT_PUBLIC_*`)
-4. Deploy
+This is the easiest way to deploy without managing servers. Frontend goes to Vercel, backend to Railway, and MongoDB to MongoDB Atlas (free tier).
 
-**Backend (Railway/Render):**
-1. Create new service from `server` directory
-2. Set start command: `npm run start:prod`
-3. Add all backend environment variables
-4. Connect MongoDB Atlas and Redis Cloud
-5. Deploy
+#### Step 1 — Set up MongoDB Atlas (Free)
+
+1. Go to https://www.mongodb.com/cloud/atlas/register and create a free account
+2. Create a new free cluster (M0 tier, any region)
+3. **Database Access** → Add a new database user with username and password
+4. **Network Access** → Add IP `0.0.0.0/0` (allow from anywhere — required for Railway)
+5. **Connect** → "Drivers" → copy the connection string. It looks like:
+   ```
+   mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net/team-chat?retryWrites=true&w=majority
+   ```
+6. Replace `<password>` with your actual password and add `/team-chat` before the `?` if missing
+
+#### Step 2 — Deploy Backend to Railway
+
+1. Push your code to GitHub
+2. Go to https://railway.app and sign in with GitHub
+3. **New Project** → **Deploy from GitHub repo** → select your repository
+4. Railway will detect the monorepo. Click **Add variables** → set **Root Directory** to `server`
+5. Railway will auto-detect Node.js and run `npm install` + `npm run build` + `npm run start:prod`
+6. Go to **Variables** tab and add ALL of these:
+
+   ```
+   NODE_ENV=production
+   MONGODB_URI=<your MongoDB Atlas connection string from Step 1>
+   JWT_SECRET=<run: openssl rand -base64 48>
+   JWT_REFRESH_SECRET=<run: openssl rand -base64 48 (different value)>
+   JWT_EXPIRES_IN=15m
+   JWT_REFRESH_EXPIRES_IN=7d
+   CLIENT_URL=https://placeholder.vercel.app
+   ALLOWED_ORIGINS=https://placeholder.vercel.app
+   CLOUDINARY_CLOUD_NAME=<from cloudinary.com dashboard>
+   CLOUDINARY_API_KEY=<from cloudinary.com dashboard>
+   CLOUDINARY_API_SECRET=<from cloudinary.com dashboard>
+   EMAIL_HOST=smtp.gmail.com
+   EMAIL_PORT=587
+   EMAIL_USER=<your gmail address>
+   EMAIL_PASS=<gmail app password>
+   EMAIL_FROM=noreply@teamchat.com
+   ```
+
+   **Note:** Don't set `PORT` — Railway sets it automatically. If you want Google OAuth, also add `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL`.
+
+7. Go to **Settings** → **Networking** → click **Generate Domain**. You'll get a URL like:
+   ```
+   https://your-app-production.up.railway.app
+   ```
+8. Copy this URL — you'll need it for Vercel.
+
+#### Step 3 — Deploy Frontend to Vercel
+
+1. Go to https://vercel.com and sign in with GitHub
+2. **Add New Project** → import your repository
+3. **Configure Project**:
+   - **Root Directory**: `client`
+   - **Framework Preset**: Next.js (auto-detected)
+   - **Build Command**: `npm run build` (default)
+   - **Output Directory**: `.next` (default)
+4. **Environment Variables** — add these:
+   ```
+   NEXT_PUBLIC_API_URL=https://your-app-production.up.railway.app/api
+   NEXT_PUBLIC_SOCKET_URL=https://your-app-production.up.railway.app
+   ```
+   (Use the Railway URL from Step 2, with `/api` appended for the API_URL only)
+5. Click **Deploy**
+6. After deployment, copy your Vercel URL (e.g., `https://your-app.vercel.app`)
+
+#### Step 4 — Update Railway with Vercel URL
+
+1. Go back to Railway → your backend service → **Variables**
+2. Update these two variables with your real Vercel URL:
+   ```
+   CLIENT_URL=https://your-app.vercel.app
+   ALLOWED_ORIGINS=https://your-app.vercel.app
+   ```
+3. Railway will auto-redeploy
+
+#### Step 5 — Test Your Deployment
+
+1. Visit `https://your-app-production.up.railway.app/api/health` — should return `{"status":"ok",...}`
+2. Visit your Vercel URL → register a new account → verify email → login → create workspace
+
+#### Optional: Custom Domain
+
+- **Vercel:** Settings → Domains → add your domain
+- **Railway:** Settings → Networking → Custom Domain
+- After adding, update `CLIENT_URL` and `ALLOWED_ORIGINS` on Railway with the new domain
+
+#### Common Issues
+
+| Problem | Solution |
+|---|---|
+| CORS error in browser | Make sure `ALLOWED_ORIGINS` on Railway exactly matches your Vercel URL (no trailing slash) |
+| `ECONNREFUSED` MongoDB | Verify Atlas Network Access allows `0.0.0.0/0` |
+| Health check fails | Check Railway logs — usually a missing env var |
+| Socket.io disconnects | Make sure `NEXT_PUBLIC_SOCKET_URL` does NOT have `/api` at the end |
+| Email OTP not sent | For Gmail, use an App Password (not your real password) |
 
 ### Generate Secure JWT Secrets
 
