@@ -17,7 +17,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
-export class UsersController {
+export class UsersController { 
   constructor(
     private usersService: UsersService,
     private uploadService: UploadService,
