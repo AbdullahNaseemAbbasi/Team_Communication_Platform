@@ -10,12 +10,13 @@ async function bootstrap() {
   app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 
   // Trust proxy headers (required for Railway/Render/Heroku reverse proxies
+  // so that rate limiting and IP detection work correctly)
   const httpAdapter = app.getHttpAdapter().getInstance();
   if (typeof httpAdapter.set === 'function') {
     httpAdapter.set('trust proxy', 1);
   }
 
-  app.setGlobalPrefix('api');   
+  app.setGlobalPrefix('api');
 
   const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.CLIENT_URL || 'http://localhost:3000')
     .split(',')
