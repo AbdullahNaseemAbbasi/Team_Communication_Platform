@@ -15,7 +15,7 @@ import { UploadService } from '../upload/upload.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
-@Controller('users')
+@Controller('users') 
 @UseGuards(JwtAuthGuard)
 export class UsersController { 
   constructor(
