@@ -23,3 +23,4 @@ export class UpdateProfileDto {
   @IsIn(['light', 'dark', 'system'])
   theme?: string;
 }
+
