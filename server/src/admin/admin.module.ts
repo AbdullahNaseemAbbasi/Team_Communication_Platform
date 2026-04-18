@@ -7,9 +7,9 @@ import {
   Workspace,
   WorkspaceSchema,
 } from '../workspaces/schemas/workspace.schema';
-import { Channel, ChannelSchema } from '../channels/schemas/channel.schema';
-import { User, UserSchema } from '../users/schemas/user.schema';
-import { WorkspacesModule } from '../workspaces/workspaces.module';
+import { Channel, ChannelSchema } from '../channels/schemas/channel.schema'; 
+import { User, UserSchema } from '../users/schemas/user.schema'; 
+import { WorkspacesModule } from '../workspaces/workspaces.module'; 
 
 @Module({
   imports: [
