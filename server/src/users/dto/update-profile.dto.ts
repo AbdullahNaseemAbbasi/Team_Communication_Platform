@@ -22,5 +22,5 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsIn(['light', 'dark', 'system'])
   theme?: string;
-}
+}  
 
