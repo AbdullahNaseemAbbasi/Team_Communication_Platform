@@ -7,11 +7,11 @@ import {
 } from './schemas/notification.schema';
 
 @Injectable()
-export class NotificationsService {
+export class NotificationsService { 
   constructor(
-    @InjectModel(Notification.name)
-    private notificationModel: Model<NotificationDocument>,
-  ) {}
+    @InjectModel(Notification.name) 
+    private notificationModel:  Model<NotificationDocument>,  
+  ) {}  
 
   async create(data: {
     recipientId: string;

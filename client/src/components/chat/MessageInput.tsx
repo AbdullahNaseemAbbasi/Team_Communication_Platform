@@ -5,10 +5,10 @@ import { useState, useRef, useCallback } from "react";
 interface Props {
   channelId: string;
   channelName?: string;
-  onSend: (data: { channelId: string; content: string }) => void;
-  onTypingStart: (channelId: string) => void;
-  onTypingStop: (channelId: string) => void;
-}
+  onSend: (data: { channelId: string; content: string }) => void; 
+  onTypingStart: (channelId: string) => void; 
+  onTypingStop: (channelId: string) => void; 
+} 
 
 export default function MessageInput({ channelId, channelName, onSend, onTypingStart, onTypingStop }: Props) {
   const [content, setContent] = useState("");

@@ -7,11 +7,11 @@ import {
 import { NotificationsService } from './notifications.service';
 import { NotificationsController } from './notifications.controller';
 
-@Module({
+@Module({ 
   imports: [
     MongooseModule.forFeature([
       { name: Notification.name, schema: NotificationSchema },
-    ]),
+    ]),  
   ],
   controllers: [NotificationsController],
   providers: [NotificationsService],
