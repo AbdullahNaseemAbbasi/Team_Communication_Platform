@@ -11,13 +11,13 @@ interface Props {
   parentMessageId: string;
   channelId: string;
   onClose: () => void;
-  onSendReply: (data: {
-    channelId: string;
-    content: string;
-    parentMessageId: string;
-  }) => void;
-  onReaction: (messageId: string, emoji: string) => void;
-}
+  onSendReply: (data: { 
+    channelId: string; 
+    content: string; 
+    parentMessageId: string; 
+  }) => void; 
+  onReaction: (messageId: string,  emoji: string) => void; 
+} 
 
 export default function ThreadPanel({
   parentMessageId,
